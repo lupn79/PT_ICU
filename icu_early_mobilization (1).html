@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>加護病房早期活動 — 跨團隊照護教案</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --teal:    #0D9488;
+    --teal-lt: #CCFBF1;
+    --teal-dk: #0F766E;
+    --navy:    #0F172A;
+    --slate:   #334155;
+    --muted:   #64748B;
+    --silver:  #F1F5F9;
+    --white:   #FFFFFF;
+    --amber:   #F59E0B;
+    --rose:    #F43F5E;
+    --green:   #22C55E;
+    --border:  #E2E8F0;
+    --radius:  12px;
+    --shadow:  0 4px 24px rgba(15,23,42,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', 'Inter', sans-serif;
+    background: #F8FAFC;
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0F172A 0%, #0D9488 100%);
+    color: white;
+    padding: 36px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .header-inner { position: relative; max-width: 1100px; margin: 0 auto; }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+  .header h1 {
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    letter-spacing: -.01em;
+  }
+  .header p { font-size: 14px; opacity: .75; }
+  .header-meta { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+  .header-meta span {
+    background: rgba(255,255,255,0.12);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── REGISTRATION OVERLAY ── */
+  #reg-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .reg-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    width: 420px; max-width: 94vw;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  }
+  .reg-card h2 {
+    font-size: 20px; font-weight: 800;
+    margin-bottom: 6px; color: var(--navy);
+  }
+  .reg-card p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+  .reg-field { margin-bottom: 18px; }
+  .reg-field label {
+    display: block; font-size: 13px; font-weight: 600;
+    margin-bottom: 6px; color: var(--slate);
+  }
+  .reg-field input, .reg-field select {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    outline: none; transition: border-color .2s;
+  }
+  .reg-field input:focus, .reg-field select:focus { border-color: var(--teal); }
+  .reg-btn {
+    width: 100%; padding: 13px;
+    background: var(--teal); color: white;
+    border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background .2s;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  .reg-btn:hover { background: var(--teal-dk); }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-info span { font-size: 13px; color: var(--muted); font-family: 'Inter', sans-serif; }
+  .progress-info strong { font-size: 14px; color: var(--teal); font-weight: 700; }
+  .progress-bar-bg {
+    height: 8px; background: var(--border);
+    border-radius: 4px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--teal), #34D399);
+    border-radius: 4px; transition: width .5s ease;
+  }
+
+  /* ── MODULE GRID ── */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .module-tab {
+    padding: 16px 14px;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+    position: relative;
+  }
+  .module-tab:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .module-tab.active { border-color: var(--teal); background: var(--teal-lt); }
+  .module-tab.completed { border-color: var(--green); background: #F0FDF4; }
+  .module-tab .tab-icon { font-size: 26px; margin-bottom: 8px; display: block; }
+  .module-tab .tab-title { font-size: 12px; font-weight: 700; color: var(--navy); line-height: 1.4; }
+  .module-tab .tab-status {
+    position: absolute; top: 8px; right: 10px;
+    font-size: 11px; color: var(--muted);
+    font-family: 'Inter', sans-serif;
+  }
+  .module-tab.completed .tab-status { color: var(--green); }
+
+  /* ── CONTENT CARD ── */
+  .content-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .card-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .card-header-icon {
+    width: 44px; height: 44px;
+    background: var(--teal-lt);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .card-header h2 { font-size: 18px; font-weight: 800; color: var(--navy); }
+  .card-header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .card-body { padding: 24px 28px; }
+
+  /* ── VIDEO ── */
+  .video-wrap {
+    position: relative; padding-bottom: 56.25%;
+    height: 0; overflow: hidden;
+    border-radius: 10px; margin-bottom: 20px;
+    background: #000;
+  }
+  .video-wrap iframe {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none; border-radius: 10px;
+  }
+  .video-note {
+    background: var(--teal-lt);
+    border-left: 3px solid var(--teal);
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--teal-dk);
+    margin-bottom: 20px;
+  }
+
+  /* ── INTRO CARDS ── */
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px;
+    margin-bottom: 20px;
+  }
+  .info-card {
+    background: var(--silver); border-radius: 10px; padding: 16px;
+  }
+  .info-card .ic-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--teal); margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+  }
+  .info-card .ic-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .info-card .ic-body { font-size: 12px; color: var(--slate); line-height: 1.6; }
+  .danger-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .dtag {
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    font-family: 'Inter', sans-serif;
+  }
+  .dtag.red { background: #FEE2E2; color: #DC2626; }
+  .dtag.orange { background: #FEF3C7; color: #D97706; }
+  .dtag.blue { background: #DBEAFE; color: #2563EB; }
+
+  /* ── QUIZ SECTION ── */
+  .quiz-section { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 6px; }
+  .quiz-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  }
+  .quiz-header h3 { font-size: 16px; font-weight: 800; }
+  .quiz-header span {
+    background: var(--teal); color: white;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 12px; font-family: 'Inter', sans-serif;
+  }
+  .question-block { margin-bottom: 24px; }
+  .question-text {
+    font-size: 14px; font-weight: 600; margin-bottom: 12px; line-height: 1.6;
+    padding: 12px 16px; background: var(--silver); border-radius: 8px;
+  }
+  .q-num {
+    display: inline-block;
+    background: var(--teal); color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 700;
+    text-align: center; line-height: 22px;
+    margin-right: 8px; flex-shrink: 0;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option-btn {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px; font-family: 'Noto Sans TC', sans-serif;
+    text-align: left; line-height: 1.5;
+    transition: all .15s;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-lt); }
+  .option-btn .opt-letter {
+    width: 22px; height: 22px; min-width: 22px;
+    border-radius: 50%;
+    background: var(--silver); color: var(--slate);
+    font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .option-btn.selected { border-color: var(--teal); background: var(--teal-lt); }
+  .option-btn.selected .opt-letter { background: var(--teal); color: white; }
+  .option-btn.correct { border-color: var(--green); background: #F0FDF4 !important; }
+  .option-btn.correct .opt-letter { background: var(--green); color: white; }
+  .option-btn.wrong { border-color: var(--rose); background: #FFF1F2 !important; }
+  .option-btn.wrong .opt-letter { background: var(--rose); color: white; }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback-msg {
+    margin-top: 10px; padding: 10px 14px;
+    border-radius: 8px; font-size: 13px; line-height: 1.5;
+    display: none;
+  }
+  .feedback-msg.show { display: block; }
+  .feedback-msg.ok { background: #F0FDF4; color: #15803D; border-left: 3px solid var(--green); }
+  .feedback-msg.ng { background: #FFF1F2; color: #BE123C; border-left: 3px solid var(--rose); }
+
+  /* Fill blank */
+  .fill-input {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    outline: none; transition: border-color .2s;
+    margin-bottom: 8px;
+  }
+  .fill-input:focus { border-color: var(--teal); }
+  .fill-input.correct { border-color: var(--green); background: #F0FDF4; }
+  .fill-input.wrong { border-color: var(--rose); background: #FFF1F2; }
+
+  .submit-quiz-btn {
+    padding: 12px 28px;
+    background: var(--teal); color: white;
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background .2s;
+    font-family: 'Noto Sans TC', sans-serif;
+    margin-top: 16px;
+  }
+  .submit-quiz-btn:hover { background: var(--teal-dk); }
+  .submit-quiz-btn:disabled { background: var(--muted); cursor: default; }
+
+  .unit-score-banner {
+    margin-top: 20px; padding: 16px 20px;
+    border-radius: 12px;
+    display: none; align-items: center; gap: 14px;
+  }
+  .unit-score-banner.show { display: flex; }
+  .unit-score-banner.pass { background: #F0FDF4; border: 1.5px solid var(--green); }
+  .unit-score-banner.fail { background: #FFF1F2; border: 1.5px solid var(--rose); }
+  .usb-score { font-size: 28px; font-weight: 900; font-family: 'Inter', sans-serif; }
+  .usb-score.pass { color: var(--green); }
+  .usb-score.fail { color: var(--rose); }
+  .usb-label { font-size: 13px; color: var(--slate); }
+
+  /* ── FINAL SUBMIT ── */
+  .final-card {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--teal-dk) 100%);
+    border-radius: 18px; padding: 36px;
+    text-align: center; color: white;
+    margin-top: 20px; display: none;
+  }
+  .final-card.show { display: block; }
+  .final-card h2 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+  .final-card p { font-size: 14px; opacity: .8; margin-bottom: 24px; }
+  .score-row {
+    display: flex; justify-content: center; gap: 20px;
+    flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .score-box {
+    background: rgba(255,255,255,0.12);
+    border-radius: 12px; padding: 16px 24px;
+    min-width: 120px;
+  }
+  .score-box .sb-n { font-size: 32px; font-weight: 900; font-family: 'Inter', sans-serif; }
+  .score-box .sb-l { font-size: 12px; opacity: .75; margin-top: 2px; }
+  .final-submit-btn {
+    padding: 14px 36px;
+    background: white; color: var(--teal-dk);
+    border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 800;
+    cursor: pointer; transition: all .2s;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  .final-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+  .final-submit-btn:disabled { opacity: .6; cursor: default; transform: none; }
+  .submit-status { margin-top: 16px; font-size: 13px; opacity: .85; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header { padding: 24px 20px; }
+    .card-body { padding: 16px 16px; }
+    .card-header { padding: 16px 16px; }
+    .main { padding: 20px 12px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- REGISTRATION OVERLAY -->
+<div id="reg-overlay">
+  <div class="reg-card">
+    <h2>🏥 歡迎參加課前測驗</h2>
+    <p>請填寫您的基本資料以開始課程，成績將自動記錄。</p>
+    <div class="reg-field">
+      <label>姓名 *</label>
+      <input type="text" id="reg-name" placeholder="請輸入您的姓名" />
+    </div>
+    <div class="reg-field">
+      <label>單位 *</label>
+      <input type="text" id="reg-unit" placeholder="例：內科加護病房、外科加護病房…" />
+    </div>
+    <button class="reg-btn" onclick="startCourse()">開始課程 →</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <span class="header-badge">跨團隊照護教案 · ICU</span>
+    <h1>加護病房早期活動<br>Early Mobilization</h1>
+
+    <div class="header-meta">
+      <span>📋 5 個學習單元</span>
+      <span>🎬 4 支教學影片</span>
+      <span>📝 互動式測驗</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div id="student-info-bar" style="background:var(--teal-lt);border-radius:10px;padding:10px 16px;margin-bottom:20px;font-size:13px;color:var(--teal-dk);display:none;">
+    👤 學員：<strong id="display-name"></strong>｜單位：<strong id="display-unit"></strong>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span>課程進度</span>
+      <strong id="progress-text">0 / 5 單元完成</strong>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- MODULE TABS -->
+  <div class="module-grid">
+    <div class="module-tab active" id="tab-0" onclick="switchModule(0)">
+      <span class="tab-icon">📖</span>
+      <div class="tab-title">課程導論<br>ICUAW 概念</div>
+      <span class="tab-status" id="tab-status-0">未完成</span>
+    </div>
+    <div class="module-tab" id="tab-1" onclick="switchModule(1)">
+      <span class="tab-icon">💪</span>
+      <div class="tab-title">MRC 肌力評估</div>
+      <span class="tab-status" id="tab-status-1">未完成</span>
+    </div>
+    <div class="module-tab" id="tab-2" onclick="switchModule(2)">
+      <span class="tab-icon">🛏</span>
+      <div class="tab-title">IMS 1–2<br>臥床期介入</div>
+      <span class="tab-status" id="tab-status-2">未完成</span>
+    </div>
+    <div class="module-tab" id="tab-3" onclick="switchModule(3)">
+      <span class="tab-icon">🧘</span>
+      <div class="tab-title">IMS 3–5<br>坐站期介入</div>
+      <span class="tab-status" id="tab-status-3">未完成</span>
+    </div>
+    <div class="module-tab" id="tab-4" onclick="switchModule(4)">
+      <span class="tab-icon">🚶</span>
+      <div class="tab-title">IMS 6–7<br>行走期介入</div>
+      <span class="tab-status" id="tab-status-4">未完成</span>
+    </div>
+  </div>
+
+  <!-- MODULE PANELS -->
+  <div id="module-panels">
+
+    <!-- ══ MODULE 0: INTRO ══ -->
+    <div class="module-panel" id="panel-0">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-header-icon">📖</div>
+          <div>
+            <h2>課程導論 — ICUAW 重症系統性乏力</h2>
+            <p>學習核心概念、危險因子與早期活動的益處</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="ic-label">定義</div>
+              <div class="ic-title">ICUAW 是什麼？</div>
+              <div class="ic-body">加護病房病人因重症疾病或治療後，產生<strong>神經肌肉病變</strong>，造成<strong>全身性、系統性、對稱性</strong>的肌肉乏力。</div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">發生率</div>
+              <div class="ic-title" style="font-size:28px;color:var(--teal)">25–50%</div>
+              <div class="ic-body">ICU 住院患者中有高達一半可能發生 ICUAW，不可輕忽。</div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">臨床表徵</div>
+              <div class="ic-title">三大影響部位</div>
+              <div class="ic-body">
+                🦾 四肢肌力↓（近端 &gt; 遠端）<br>
+                🫁 呼吸肌群↓ → 脫離呼吸器困難<br>
+                👄 吞嚥肌群↓ → 吞嚥障礙
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">ICUAW 影響</div>
+              <div class="ic-title">住院期間惡化</div>
+              <div class="ic-body">
+                ↑ 呼吸器使用天數<br>
+                ↑ ICU & 住院天數<br>
+                ↑ 死亡率<br>
+                ↓ 身體活動功能
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card" style="margin-bottom:14px;">
+            <div class="ic-label">三種分類</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+              <div style="flex:1;min-width:160px;padding:10px;background:white;border-radius:8px;border:1px solid var(--border);">
+                <div style="font-weight:800;font-size:13px;color:var(--teal)">CIP</div>
+                <div style="font-size:12px;color:var(--slate);margin-top:4px;">重症病理性多重神經病變<br>導因：全身性發炎反應</div>
+              </div>
+              <div style="flex:1;min-width:160px;padding:10px;background:white;border-radius:8px;border:1px solid var(--border);">
+                <div style="font-weight:800;font-size:13px;color:var(--amber)">CIM</div>
+                <div style="font-size:12px;color:var(--slate);margin-top:4px;">重症病理性肌肉病變<br>導因：發炎介質、臥床不動</div>
+              </div>
+              <div style="flex:1;min-width:160px;padding:10px;background:white;border-radius:8px;border:1px solid var(--border);">
+                <div style="font-weight:800;font-size:13px;color:var(--rose)">CINM</div>
+                <div style="font-size:12px;color:var(--slate);margin-top:4px;">重症病理性神經肌肉病變<br>兩者皆有</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card" style="margin-bottom:20px;">
+            <div class="ic-label">危險因子</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--rose);margin-bottom:6px;">🔒 不可調節</div>
+                <div class="danger-tags">
+                  <span class="dtag red">年齡</span>
+                  <span class="dtag red">女性</span>
+                  <span class="dtag red">APACHE&gt;15</span>
+                  <span class="dtag red">高 SOFA</span>
+                  <span class="dtag red">敗血症</span>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;">🔓 可調節</div>
+                <div class="danger-tags">
+                  <span class="dtag blue">長時間臥床</span>
+                  <span class="dtag orange">深度鎮靜</span>
+                  <span class="dtag blue">高血糖</span>
+                  <span class="dtag orange">呼吸器天數</span>
+                  <span class="dtag blue">肌肉鬆弛劑</span>
+                  <span class="dtag orange">皮質類固醇</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card" style="background:var(--teal-lt);border:1px solid var(--teal);margin-bottom:0;">
+            <div class="ic-label" style="color:var(--teal-dk)">預防策略 EM 的效益</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+              <span class="dtag blue">↓ 呼吸器使用天數</span>
+              <span class="dtag blue">↓ ICU 停留天數</span>
+              <span class="dtag blue">↓ 譫妄發生</span>
+              <span class="dtag blue">↓ 死亡率</span>
+              <span class="dtag blue">↑ 身體活動功能</span>
+              <span class="dtag blue">↑ 生活品質</span>
+            </div>
+            <div style="font-size:12px;color:var(--teal-dk);margin-top:10px;">
+              ⏰ <strong>Early</strong> = 入住 ICU <strong>7 天內</strong>，或仍使用呼吸器期間開始復健活動（生命徵象穩定為前提）
+            </div>
+          </div>
+
+          <!-- QUIZ 0 -->
+          <div class="quiz-section">
+            <div class="quiz-header">
+              <h3>📝 單元測驗</h3>
+              <span id="quiz-count-0">5 題</span>
+            </div>
+            <div id="quiz-0"></div>
+            <button class="submit-quiz-btn" id="submit-btn-0" onclick="submitQuiz(0)">提交本單元答案</button>
+            <div class="unit-score-banner" id="score-banner-0">
+              <div class="usb-score" id="score-num-0"></div>
+              <div>
+                <div class="usb-label" id="score-label-0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MODULE 1: MRC ══ -->
+    <div class="module-panel" id="panel-1" style="display:none">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-header-icon">💪</div>
+          <div>
+            <h2>MRC 肌力評估</h2>
+            <p>Medical Research Council Scale — ICUAW 診斷工具</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="video-note">👇 請先觀看影片，再進行下方測驗</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/gTHeAUqLDRc" allowfullscreen
+              title="MRC 肌力評估教學"></iframe>
+          </div>
+          <div class="info-grid" style="margin-bottom:16px;">
+            <div class="info-card">
+              <div class="ic-label">評估部位（雙側 × 6 = 60 分）</div>
+              <div class="ic-body" style="margin-top:6px;line-height:2">
+                🦾 肩部外展<br>🦾 肘部屈曲<br>🦾 腕部上伸<br>
+                🦵 髖部屈曲<br>🦵 膝部伸展<br>🦵 踝部背曲
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">評分標準</div>
+              <div class="ic-body" style="margin-top:6px;line-height:2">
+                5：抵抗重力＋抵抗阻力<br>
+                4：抵抗重力＋部分阻力<br>
+                3：抵抗重力，無法抵抗阻力<br>
+                2：無法抵抗重力<br>
+                1：僅可見肌肉收縮<br>
+                0：完全癱瘓
+              </div>
+            </div>
+            <div class="info-card" style="background:var(--teal-lt);border:1px solid var(--teal);">
+              <div class="ic-label" style="color:var(--teal-dk)">診斷標準</div>
+              <div class="ic-body" style="color:var(--teal-dk);margin-top:6px;">
+                2 次以上（間隔 &gt;24 小時）的 MRC 測試：<br><br>
+                <strong>總分 &lt; 48</strong><br>或<br>
+                <strong>每個部位皆 ≤ 4</strong><br><br>
+                → 診斷 ICUAW
+              </div>
+            </div>
+          </div>
+          <!-- QUIZ 1 -->
+          <div class="quiz-section">
+            <div class="quiz-header">
+              <h3>📝 單元測驗</h3>
+              <span id="quiz-count-1">5 題</span>
+            </div>
+            <div id="quiz-1"></div>
+            <button class="submit-quiz-btn" id="submit-btn-1" onclick="submitQuiz(1)">提交本單元答案</button>
+            <div class="unit-score-banner" id="score-banner-1">
+              <div class="usb-score" id="score-num-1"></div>
+              <div><div class="usb-label" id="score-label-1"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MODULE 2: IMS 1-2 ══ -->
+    <div class="module-panel" id="panel-2" style="display:none">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-header-icon">🛏</div>
+          <div>
+            <h2>IMS 1–2 分：臥床期早期介入</h2>
+            <p>床上主動運動、被動移位至床旁椅</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="video-note">👇 請先觀看影片，再進行下方測驗</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/5K1X4eZDbvQ" allowfullscreen
+              title="IMS 1-2 早期介入教學"></iframe>
+          </div>
+          <div class="info-grid" style="margin-bottom:16px;">
+            <div class="info-card">
+              <div class="ic-label">IMS 0 — 無（躺床）</div>
+              <div class="ic-body">醫護人員給予<strong>被動翻身或運動</strong>，無主動動作</div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">IMS 1 — 床上坐姿 / 床上活動</div>
+              <div class="ic-body">翻身、抬臀 (bridging)、床上腳踏車、協助下主動運動<br><em>未離開床上或移位至床旁</em></div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">IMS 2 — 被動移位至床旁椅</div>
+              <div class="ic-body">移位機吊起、被動離開或滑動移位至床旁椅<br><em>無站立或坐於床緣</em></div>
+            </div>
+          </div>
+          <!-- QUIZ 2 -->
+          <div class="quiz-section">
+            <div class="quiz-header">
+              <h3>📝 單元測驗</h3>
+              <span id="quiz-count-2">4 題</span>
+            </div>
+            <div id="quiz-2"></div>
+            <button class="submit-quiz-btn" id="submit-btn-2" onclick="submitQuiz(2)">提交本單元答案</button>
+            <div class="unit-score-banner" id="score-banner-2">
+              <div class="usb-score" id="score-num-2"></div>
+              <div><div class="usb-label" id="score-label-2"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MODULE 3: IMS 3-5 ══ -->
+    <div class="module-panel" id="panel-3" style="display:none">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-header-icon">🧘</div>
+          <div>
+            <h2>IMS 3–5 分：坐站期早期介入</h2>
+            <p>床緣坐起、站立、主動移位至床旁椅</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="video-note">👇 請先觀看影片，再進行下方測驗</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/SMDFbNReE5U" allowfullscreen
+              title="IMS 3-5 早期介入教學"></iframe>
+          </div>
+          <div class="info-grid" style="margin-bottom:16px;">
+            <div class="info-card">
+              <div class="ic-label">IMS 3 — 坐於床緣</div>
+              <div class="ic-body">可能需醫護人員協助，但可<strong>主動坐於床緣</strong>並有部分軀幹控制</div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">IMS 4 — 站立</div>
+              <div class="ic-body">無論是否需協助，<strong>雙腳承受重力下站立</strong>。可使用站立式升降裝置或傾斜台</div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">IMS 5 — 主動移位至床旁椅</div>
+              <div class="ic-body">能跨步或拖著腳步移位至床旁椅<br><em>需主動將重量從一腳轉移至另一腳</em></div>
+            </div>
+          </div>
+          <!-- QUIZ 3 -->
+          <div class="quiz-section">
+            <div class="quiz-header">
+              <h3>📝 單元測驗</h3>
+              <span id="quiz-count-3">4 題</span>
+            </div>
+            <div id="quiz-3"></div>
+            <button class="submit-quiz-btn" id="submit-btn-3" onclick="submitQuiz(3)">提交本單元答案</button>
+            <div class="unit-score-banner" id="score-banner-3">
+              <div class="usb-score" id="score-num-3"></div>
+              <div><div class="usb-label" id="score-label-3"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MODULE 4: IMS 6-7 ══ -->
+    <div class="module-panel" id="panel-4" style="display:none">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-header-icon">🚶</div>
+          <div>
+            <h2>IMS 6–7 分：行走期早期介入</h2>
+            <p>原地踏步、協助下行走</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="video-note">👇 請先觀看影片，再進行下方測驗</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/svMCxbtSkmw" allowfullscreen
+              title="IMS 6-7 早期介入教學"></iframe>
+          </div>
+          <div class="info-grid" style="margin-bottom:16px;">
+            <div class="info-card">
+              <div class="ic-label">IMS 6 — 床邊原地踏步</div>
+              <div class="ic-body">無論是否需協助，能在原地<strong>交替抬起雙腳踏步</strong>（至少各踏 2 次）</div>
+            </div>
+            <div class="info-card">
+              <div class="ic-label">IMS 7 — ≥2 人協助下行走</div>
+              <div class="ic-body">於 2 人以上協助下，<strong>離開床或床旁椅行走至少 5 公尺</strong></div>
+            </div>
+            <div class="info-card" style="background:var(--teal-lt);border:1px solid var(--teal);">
+              <div class="ic-label" style="color:var(--teal-dk)">IMS 8–10 更高階段</div>
+              <div class="ic-body" style="color:var(--teal-dk);">
+                8：1 人協助下行走 ≥5m<br>
+                9：使用助行器獨力行走<br>
+                10：完全獨立行走 ≥5m
+              </div>
+            </div>
+          </div>
+          <!-- QUIZ 4 -->
+          <div class="quiz-section">
+            <div class="quiz-header">
+              <h3>📝 單元測驗</h3>
+              <span id="quiz-count-4">5 題</span>
+            </div>
+            <div id="quiz-4"></div>
+            <button class="submit-quiz-btn" id="submit-btn-4" onclick="submitQuiz(4)">提交本單元答案</button>
+            <div class="unit-score-banner" id="score-banner-4">
+              <div class="usb-score" id="score-num-4"></div>
+              <div><div class="usb-label" id="score-label-4"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end module-panels -->
+
+  <!-- FINAL SUBMIT CARD -->
+  <div class="final-card" id="final-card">
+    <h2>🎉 課程完成！</h2>
+    <p>您已完成所有 5 個單元，以下是您的整體成績摘要</p>
+    <div class="score-row" id="final-score-row"></div>
+    <button class="final-submit-btn" id="final-submit-btn" onclick="submitToSheets()">
+      📊 提交成績至 Google 試算表
+    </button>
+    <div class="submit-status" id="submit-status"></div>
+  </div>
+
+</div><!-- end main -->
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════
+
+// Google Apps Script Web App URL — REPLACE WITH YOUR OWN
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyJjsCXwXHY8G0Vzk2-FaRc4JK7ZvnQvDdlVK3kXw8c90wHDXFqHYkZ6p3aiNkJnxcgEQ/exec';
+
+const MODULES = [
+  { title: '課程導論', icon: '📖' },
+  { title: 'MRC 評估', icon: '💪' },
+  { title: 'IMS 1–2', icon: '🛏' },
+  { title: 'IMS 3–5', icon: '🧘' },
+  { title: 'IMS 6–7', icon: '🚶' }
+];
+
+// Quiz data: each question: { type: 'mc'|'tf', text, opts?, answer (0-indexed or T/F), explanation }
+const QUIZZES = [
+  // Module 0: ICUAW 導論 (5 questions)
+  [
+    {
+      type:'mc',
+      text:'下列哪一項是 ICUAW（重症系統性乏力）的正確定義？',
+      opts:['僅影響呼吸肌群的局部性乏力',
+            '因重症疾病或治療產生神經肌肉病變，造成全身性、系統性、對稱性肌肉乏力',
+            '由外傷直接造成的周邊神經損傷',
+            '入住 ICU 後一週以上才會出現的肌肉退化'],
+      answer:1,
+      explanation:'ICUAW 定義為全身性、系統性、對稱性的肌肉乏力，由重症疾病狀態或治療所引起。'
+    },
+    {
+      type:'mc',
+      text:'ICUAW 在 ICU 患者中的發生率大約為多少？',
+      opts:['5–10%','10–20%','25–50%','60–80%'],
+      answer:2,
+      explanation:'文獻指出 ICUAW 發生率約為 25%–50%，相當高。'
+    },
+    {
+      type:'mc',
+      text:'下列哪一項屬於 ICUAW「可調節」危險因子？',
+      opts:['患者年齡','患者性別','深度鎮靜','APACHE 分數'],
+      answer:2,
+      explanation:'深度鎮靜可透過調整藥物使用來改變，屬可調節因子；年齡、性別、APACHE 分數則為不可調節因子。'
+    },
+    {
+      type:'mc',
+      text:'執行早期活動（Early Mobilization）對病人的直接益處不包含哪一項？',
+      opts:['縮短呼吸器使用天數','改善身體活動功能','增加感染風險','降低譫妄發生率'],
+      answer:2,
+      explanation:'EM 的益處包括縮短呼吸器天數、改善活動功能、降低譫妄，並不會增加感染風險。'
+    },
+    {
+      type:'mc',
+      text:'「Early Mobilization」定義中，「Early」指的是什麼時間？',
+      opts:['出院後 1 週內','入住 ICU 後 7 天內（或仍使用呼吸器期間）','病情完全穩定後','轉出 ICU 後立即開始'],
+      answer:1,
+      explanation:'EM 的定義是入住 ICU 7 天內，或病人仍在使用呼吸器的期間，開始執行復健活動。'
+    }
+  ],
+  // Module 1: MRC (5 questions)
+  [
+    {
+      type:'mc',
+      text:'MRC 量表評估 ICUAW 共評估幾個肌群（單側）？',
+      opts:['3 個','6 個','8 個','12 個'],
+      answer:1,
+      explanation:'MRC 單側評估 6 個肌群：肩外展、肘屈曲、腕上伸、髖屈曲、膝伸展、踝背曲，雙側合計 12 個部位，滿分 60 分。'
+    },
+    {
+      type:'mc',
+      text:'MRC 評分「3 分」代表什麼？',
+      opts:['完全無法移動','僅見肌肉收縮','可抵抗重力，但無法抵抗阻力','可抵抗重力及部分阻力'],
+      answer:2,
+      explanation:'MRC 3 分代表可抵抗重力做出關節活動，但無法再額外抵抗外加阻力。'
+    },
+    {
+      type:'mc',
+      text:'依 MRC 量表，診斷 ICUAW 的標準為何？',
+      opts:['單次測試總分 < 48 分',
+            '2 次以上（間隔 >24 小時）測試總分 < 48 分，或每個部位皆 ≤ 4',
+            '單次測試總分 < 36 分',
+            '僅依肌電圖結果判斷'],
+      answer:1,
+      explanation:'需 2 次以上（間隔大於 24 小時）的 MRC 測試，總分 < 48 分或每個受測部位皆 ≤ 4，才符合 ICUAW 診斷。'
+    },
+    {
+      type:'mc',
+      text:'MRC 量表屬於何種評估工具？',
+      opts:['實驗室抽血檢驗','臨床肌力徒手測試量表','神經傳導試驗','肌肉組織切片'],
+      answer:1,
+      explanation:'MRC 量表是由臨床人員觀察與測試的徒手肌力評估工具，不需儀器設備。'
+    },
+    {
+      type:'mc',
+      text:'在 MRC 評估中，「近端 > 遠端」的肌力下降意指什麼？',
+      opts:['腳比手更虛弱','靠近軀幹的肌群比末端肢體更早出現乏力','手指比手腕更早無力','下肢比上肢更嚴重'],
+      answer:1,
+      explanation:'ICUAW 臨床特徵為近端肌群（靠近軀幹）比遠端肌群更先或更嚴重地出現乏力。'
+    }
+  ],
+  // Module 2: IMS 1-2 (4 questions)
+  [
+    {
+      type:'mc',
+      text:'IMS（ICU Mobility Scale）評分 0 分的定義是什麼？',
+      opts:['能在床旁站立','在床上進行主動運動','僅接受被動翻身或運動，無主動動作','可坐至床緣'],
+      answer:2,
+      explanation:'IMS 0 分：醫護人員給予被動翻身或運動，患者無任何主動動作。'
+    },
+    {
+      type:'mc',
+      text:'IMS 1 分的活動中，下列哪項「不包含」在內？',
+      opts:['翻身','抬臀 (bridging)','床上腳踏車','主動移位至床旁椅'],
+      answer:3,
+      explanation:'IMS 1 分的活動均在床上進行，包含翻身、橋式、床上腳踏車等，未離開床上。主動移位至床旁椅屬 IMS 5。'
+    },
+    {
+      type:'mc',
+      text:'IMS 2 分與 IMS 1 分最主要的區別是什麼？',
+      opts:['患者是否有意識','是否離開床（被動移位至床旁椅）','是否能站立','是否使用呼吸器'],
+      answer:1,
+      explanation:'IMS 2 分時患者被（移位機）吊起或被動移位至床旁椅，已離開床面；IMS 1 分仍在床上。'
+    },
+    {
+      type:'mc',
+      text:'執行 ICU 早期活動前，下列哪項「不是」必要的安全確認項目？',
+      opts:['確認鎮靜深度 (RASS)','確認管路位置與長度','確認患者保險給付狀況','確認生命徵象'],
+      answer:2,
+      explanation:'執行 EM 前需確認意識狀態 (GCS)、鎮靜深度 (RASS)、生命徵象、肌肉力量、疼痛指數及管路位置，與保險無關。'
+    }
+  ],
+  // Module 3: IMS 3-5 (4 questions)
+  [
+    {
+      type:'mc',
+      text:'IMS 3 分的活動定義為何？',
+      opts:['無論是否需協助，雙腳承受重力站立',
+            '可能需協助，但可主動坐於床緣並有部分軀幹控制',
+            '被動移位至床旁椅',
+            '能跨步移位至床旁椅'],
+      answer:1,
+      explanation:'IMS 3 分定義：可能需醫護人員協助，但可主動坐於床緣並有部分軀幹控制。'
+    },
+    {
+      type:'mc',
+      text:'IMS 4 分中，「站立式升降裝置或傾斜台」是用來協助哪個動作？',
+      opts:['坐於床緣','床邊踏步','站立','行走'],
+      answer:2,
+      explanation:'IMS 4 為站立，可使用站立式升降裝置或傾斜台協助患者達到雙腳承重站立的狀態。'
+    },
+    {
+      type:'mc',
+      text:'IMS 5 分「主動移位至床旁椅」的關鍵動作要求是什麼？',
+      opts:['僅需被吊起移位','必須能將重量從一條腿轉移至另一條腿','需要 3 人以上協助','必須完全不需任何協助'],
+      answer:1,
+      explanation:'IMS 5 分要求患者能主動將重量從一腳轉移至另一腳，若已在醫療設備協助下站立則需走到床旁椅（不含在站立裝置中轉動）。'
+    },
+    {
+      type:'mc',
+      text:'下列哪個生命徵象數值屬於 ICU 早期活動的停止標準（活動中）？',
+      opts:['心率 110 次/分','收縮壓 160 mmHg','血氧 86%','體溫 37.5°C'],
+      answer:2,
+      explanation:'活動中血氧 <88% 為停止標準；心率 >130 次/分或收縮壓 <90 或 >180 mmHg 亦需停止。'
+    }
+  ],
+  // Module 4: IMS 6-7 (5 questions)
+  [
+    {
+      type:'mc',
+      text:'IMS 6 分「床邊原地踏步」的最低要求是什麼？',
+      opts:['連續踏步 10 分鐘','兩腳各踏至少 2 次（共 4 次）','需完全不用協助','需能前進至少 1 公尺'],
+      answer:1,
+      explanation:'IMS 6 分定義：能在原地交替抬起雙腳踏步，必須能踏至少 4 次（每隻腳兩次）。'
+    },
+    {
+      type:'mc',
+      text:'IMS 7 分的定義是什麼？',
+      opts:['獨立行走 ≥5 公尺',
+            '使用助行器獨力行走 ≥5 公尺',
+            '於 ≥2 人協助下，離開床行走至少 5 公尺',
+            '於 1 人協助下行走至少 5 公尺'],
+      answer:2,
+      explanation:'IMS 7 分：於 2 人以上協助下，離開床或床旁椅行走至少 5 公尺。'
+    },
+    {
+      type:'mc',
+      text:'跨團隊合作中，下列哪個職類「不在」ICU EM 核心團隊之列？',
+      opts:['醫師','護理師','呼吸治療師','藥師'],
+      answer:3,
+      explanation:'本教案中 ICU EM 的核心跨團隊成員為：醫師、護理師、物理治療師、呼吸治療師。'
+    },
+    {
+      type:'mc',
+      text:'使用 CPOT 疼痛評估量表，幾分以上需要處置？',
+      opts:['1 分','3 分','5 分','7 分'],
+      answer:1,
+      explanation:'CPOT（Critical-Care Pain Observation Tool）總分 > 3 分即需進行疼痛處置。'
+    },
+    {
+      type:'mc',
+      text:'下列關於 ICU 早期活動安全標準的敘述，哪項「正確」？',
+      opts:['FiO₂ > 60% 時仍可進行活動',
+            'PEEP > 10 cmH₂O 時為暫停標準',
+            '血小板 < 20,000/mm³ 時不建議執行活動',
+            '動脈血 pH < 7.35 即應停止活動'],
+      answer:2,
+      explanation:'血小板 < 20,000/mm³ 屬於暫停活動的抽血標準之一；FiO₂ >60%、PEEP >10 cmH₂O 也是暫停標準（非可繼續）；pH < 7.25 才是停止標準。'
+    }
+  ]
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let studentName = '';
+let studentUnit = '';
+let currentModule = 0;
+let moduleCompleted = [false, false, false, false, false];
+let moduleScores = [null, null, null, null, null];   // {score, total, details[]}
+let userAnswers = [[], [], [], [], []];               // per module, per question
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+function startCourse() {
+  const name = document.getElementById('reg-name').value.trim();
+  const unit = document.getElementById('reg-unit').value.trim();
+  if (!name || !unit) { alert('請填寫姓名與單位'); return; }
+  studentName = name; studentUnit = unit;
+  document.getElementById('reg-overlay').style.display = 'none';
+  document.getElementById('student-info-bar').style.display = 'block';
+  document.getElementById('display-name').textContent = studentName;
+  document.getElementById('display-unit').textContent = studentUnit;
+  QUIZZES.forEach((q, idx) => renderQuiz(idx));
+  updateProgress();
+}
+
+// ══════════════════════════════════════════════
+//  RENDER QUIZ
+// ══════════════════════════════════════════════
+function renderQuiz(moduleIdx) {
+  const container = document.getElementById(`quiz-${moduleIdx}`);
+  if (!container) return;
+  container.innerHTML = '';
+  userAnswers[moduleIdx] = new Array(QUIZZES[moduleIdx].length).fill(null);
+
+  QUIZZES[moduleIdx].forEach((q, qi) => {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    block.id = `q-${moduleIdx}-${qi}`;
+    let html = `<div class="question-text"><span class="q-num">${qi+1}</span>${q.text}</div>`;
+    html += `<div class="options">`;
+    const letters = ['A','B','C','D','E'];
+    q.opts.forEach((opt, oi) => {
+      html += `<button class="option-btn" id="opt-${moduleIdx}-${qi}-${oi}" 
+        onclick="selectOption(${moduleIdx},${qi},${oi})">
+        <span class="opt-letter">${letters[oi]}</span>${opt}
+      </button>`;
+    });
+    html += `</div>`;
+    html += `<div class="feedback-msg" id="fb-${moduleIdx}-${qi}"></div>`;
+    block.innerHTML = html;
+    container.appendChild(block);
+  });
+  document.getElementById(`quiz-count-${moduleIdx}`).textContent = `${QUIZZES[moduleIdx].length} 題`;
+}
+
+// ══════════════════════════════════════════════
+//  SELECT OPTION
+// ══════════════════════════════════════════════
+function selectOption(mi, qi, oi) {
+  if (moduleCompleted[mi]) return;
+  const q = QUIZZES[mi][qi];
+  // deselect previous
+  if (userAnswers[mi][qi] !== null) {
+    const prev = document.getElementById(`opt-${mi}-${qi}-${userAnswers[mi][qi]}`);
+    if (prev) prev.classList.remove('selected');
+  }
+  userAnswers[mi][qi] = oi;
+  const btn = document.getElementById(`opt-${mi}-${qi}-${oi}`);
+  btn.classList.add('selected');
+}
+
+// ══════════════════════════════════════════════
+//  SUBMIT QUIZ
+// ══════════════════════════════════════════════
+function submitQuiz(mi) {
+  const qs = QUIZZES[mi];
+  // check all answered
+  const unanswered = userAnswers[mi].findIndex(a => a === null);
+  if (unanswered !== -1) {
+    alert(`請回答第 ${unanswered+1} 題`);
+    document.getElementById(`q-${mi}-${unanswered}`).scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  let score = 0;
+  const details = [];
+  qs.forEach((q, qi) => {
+    const chosen = userAnswers[mi][qi];
+    const correct = chosen === q.answer;
+    if (correct) score++;
+    details.push({ q: qi+1, chosen, answer: q.answer, correct });
+    // mark buttons
+    const btns = document.querySelectorAll(`[id^="opt-${mi}-${qi}-"]`);
+    btns.forEach(b => { b.disabled = true; b.classList.remove('selected'); });
+    const correctBtn = document.getElementById(`opt-${mi}-${qi}-${q.answer}`);
+    if (correctBtn) correctBtn.classList.add('correct');
+    if (!correct) {
+      const wrongBtn = document.getElementById(`opt-${mi}-${qi}-${chosen}`);
+      if (wrongBtn) wrongBtn.classList.add('wrong');
+    }
+    // feedback
+    const fb = document.getElementById(`fb-${mi}-${qi}`);
+    fb.classList.add('show');
+    fb.classList.add(correct ? 'ok' : 'ng');
+    fb.textContent = (correct ? '✓ 正確！' : `✗ 答案為 ${['A','B','C','D','E'][q.answer]}`) + '　' + q.explanation;
+  });
+  moduleScores[mi] = { score, total: qs.length, details };
+  moduleCompleted[mi] = true;
+  document.getElementById(`submit-btn-${mi}`).disabled = true;
+
+  const pct = Math.round(score/qs.length*100);
+  const pass = pct >= 60;
+  const banner = document.getElementById(`score-banner-${mi}`);
+  banner.classList.add('show', pass ? 'pass' : 'fail');
+  const sn = document.getElementById(`score-num-${mi}`);
+  sn.textContent = `${score}/${qs.length}`;
+  sn.className = `usb-score ${pass ? 'pass' : 'fail'}`;
+  document.getElementById(`score-label-${mi}`).textContent = `${pct}% — ${pass ? '通過！🎉' : '繼續加油！'}`;
+
+  // mark tab
+  document.getElementById(`tab-${mi}`).classList.add('completed');
+  document.getElementById(`tab-status-${mi}`).textContent = `${score}/${qs.length}`;
+  updateProgress();
+  checkAllDone();
+}
+
+// ══════════════════════════════════════════════
+//  SWITCH MODULE
+// ══════════════════════════════════════════════
+function switchModule(mi) {
+  document.querySelectorAll('.module-panel').forEach(p => p.style.display='none');
+  document.querySelectorAll('.module-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`panel-${mi}`).style.display = 'block';
+  document.getElementById(`tab-${mi}`).classList.add('active');
+  currentModule = mi;
+}
+
+// ══════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════
+function updateProgress() {
+  const done = moduleCompleted.filter(Boolean).length;
+  document.getElementById('progress-text').textContent = `${done} / 5 單元完成`;
+  document.getElementById('progress-fill').style.width = `${done/5*100}%`;
+}
+
+function checkAllDone() {
+  if (!moduleCompleted.every(Boolean)) return;
+  const fc = document.getElementById('final-card');
+  fc.classList.add('show');
+  // build score row
+  let total = 0, grand = 0;
+  const row = document.getElementById('final-score-row');
+  row.innerHTML = '';
+  moduleCompleted.forEach((_, mi) => {
+    const s = moduleScores[mi];
+    total += s.total; grand += s.score;
+    row.innerHTML += `<div class="score-box">
+      <div class="sb-n">${s.score}/${s.total}</div>
+      <div class="sb-l">${MODULES[mi].icon} ${MODULES[mi].title}</div>
+    </div>`;
+  });
+  row.innerHTML += `<div class="score-box" style="background:rgba(255,255,255,0.25);">
+    <div class="sb-n">${grand}/${total}</div>
+    <div class="sb-l">🏆 總分</div>
+  </div>`;
+  fc.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ══════════════════════════════════════════════
+//  SUBMIT TO SHEETS
+// ══════════════════════════════════════════════
+function submitToSheets() {
+  const btn = document.getElementById('final-submit-btn');
+  const status = document.getElementById('submit-status');
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const detailCols = {};
+  QUIZZES.forEach((qs, mi) => {
+    qs.forEach((q, qi) => {
+      const d = moduleScores[mi].details[qi];
+      const letters = ['A','B','C','D','E'];
+      detailCols[`M${mi+1}_Q${qi+1}`] = d.correct ? '✓' : `✗(選${letters[d.chosen]}/答${letters[d.answer]})`;
+    });
+  });
+
+  const payload = {
+    name: studentName,
+    unit: studentUnit,
+    date: dateStr,
+    scores: moduleScores.map((s,i) => ({ module: MODULES[i].title, score: s.score, total: s.total })),
+    details: detailCols
+  };
+
+  // 用隱藏表單提交，繞過 CORS 限制
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SHEET_URL;
+  form.target = '_blank';
+
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+
+  btn.disabled = true;
+  btn.textContent = '✅ 已提交！';
+  status.textContent = `成績已送出（${dateStr}）。新分頁若顯示 success 即寫入成功。`;
+}
+</script>
+</body>
+</html>
