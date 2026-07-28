@@ -1018,6 +1018,8 @@ const QUIZZES = [
 // ══════════════════════════════════════════════
 let studentName = '';
 let studentUnit = '';
+let studentRole = '';
+let studentSeniority = '';
 let currentModule = 0;
 let moduleCompleted = [false, false, false, false, false];
 let moduleScores = [null, null, null, null, null];   // {score, total, details[]}
@@ -1039,7 +1041,10 @@ function startCourse() {
   const role = roleSel === '__other__' ? (roleOther || '其他') : roleSel;
   if (!name || !roleSel || !seniority) { alert('請填寫所有欄位'); return; }
   if (roleSel === '__other__' && !roleOther) { alert('請填寫身分別'); return; }
-  studentName = name; studentUnit = role + '｜' + seniority;
+  studentName = name;
+  studentRole = role;
+  studentSeniority = seniority;
+  studentUnit = role + '｜' + seniority;
   document.getElementById('reg-overlay').style.display = 'none';
   // Show pretest
   renderSurveyQuestions('pre',
@@ -1375,7 +1380,7 @@ function collectSurveyAnswers(prefix) {
 function submitSurveyToSheets(timing, answers) {
   const now = new Date();
   const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const payload = { type: 'survey', timing, name: studentName, unit: studentUnit, date: dateStr, answers };
+  const payload = { type: 'survey', timing, name: studentName, role: studentRole, seniority: studentSeniority, unit: studentUnit, date: dateStr, answers };
   const formBody = 'payload=' + encodeURIComponent(JSON.stringify(payload));
   fetch(SURVEY_SHEET_URL, {
     method: 'POST',
