@@ -389,8 +389,27 @@
       <input type="text" id="reg-name" placeholder="請輸入您的姓名" />
     </div>
     <div class="reg-field">
-      <label>單位 *</label>
-      <input type="text" id="reg-unit" placeholder="例：內科加護病房、外科加護病房…" />
+      <label>身分別 *</label>
+      <select id="reg-role" onchange="toggleRoleOther()">
+        <option value="">請選擇身分別</option>
+        <option value="物理治療實習生（UGY學員）">A 物理治療實習生（UGY學員）</option>
+        <option value="物理治療師（PGY學員）">B 物理治療師（PGY學員）</option>
+        <option value="物理治療師（非PGY學員）">C 物理治療師（非PGY學員）</option>
+        <option value="__other__">D 其他</option>
+      </select>
+      <input type="text" id="reg-role-other" placeholder="請輸入身分別" style="display:none;margin-top:8px;width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:'Noto Sans TC',sans-serif;outline:none;" />
+    </div>
+    <div class="reg-field">
+      <label>專業年資 *</label>
+      <select id="reg-seniority">
+        <option value="">請選擇年資</option>
+        <option value="實習生">A 實習生</option>
+        <option value="未滿1年">B &lt;1 年</option>
+        <option value="1-2年">C 1–2 年</option>
+        <option value="3-5年">D 3–5 年</option>
+        <option value="6-10年">E 6–10 年</option>
+        <option value="10年以上">F &gt;10 年</option>
+      </select>
     </div>
     <button class="reg-btn" onclick="startCourse()">開始課程 →</button>
   </div>
@@ -449,7 +468,7 @@
 <!-- MAIN -->
 <div class="main">
   <div id="student-info-bar" style="background:var(--teal-lt);border-radius:10px;padding:10px 16px;margin-bottom:20px;font-size:13px;color:var(--teal-dk);display:none;">
-    👤 學員：<strong id="display-name"></strong>｜單位：<strong id="display-unit"></strong>
+    👤 學員：<strong id="display-name"></strong>｜<strong id="display-unit"></strong>
   </div>
 
   <!-- PROGRESS -->
@@ -1007,11 +1026,20 @@ let userAnswers = [[], [], [], [], []];               // per module, per questio
 // ══════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════
+function toggleRoleOther() {
+  const sel = document.getElementById('reg-role').value;
+  document.getElementById('reg-role-other').style.display = sel === '__other__' ? 'block' : 'none';
+}
+
 function startCourse() {
   const name = document.getElementById('reg-name').value.trim();
-  const unit = document.getElementById('reg-unit').value.trim();
-  if (!name || !unit) { alert('請填寫姓名與單位'); return; }
-  studentName = name; studentUnit = unit;
+  const roleSel = document.getElementById('reg-role').value;
+  const roleOther = document.getElementById('reg-role-other').value.trim();
+  const seniority = document.getElementById('reg-seniority').value;
+  const role = roleSel === '__other__' ? (roleOther || '其他') : roleSel;
+  if (!name || !roleSel || !seniority) { alert('請填寫所有欄位'); return; }
+  if (roleSel === '__other__' && !roleOther) { alert('請填寫身分別'); return; }
+  studentName = name; studentUnit = role + '｜' + seniority;
   document.getElementById('reg-overlay').style.display = 'none';
   // Show pretest
   renderSurveyQuestions('pre',
