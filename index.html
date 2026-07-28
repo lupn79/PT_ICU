@@ -1217,7 +1217,7 @@ function submitToSheets() {
 
   const detailCols = {};
   QUIZZES.forEach((qs, mi) => {
-    if (mi === 0) return; // 課程導論無題目，跳過
+    if (mi === 0) return;
     qs.forEach((q, qi) => {
       const d = moduleScores[mi].details[qi];
       const letters = ['A','B','C','D','E'];
@@ -1225,35 +1225,42 @@ function submitToSheets() {
     });
   });
 
+  const scoresToSend = moduleScores
+    .filter((s,i) => i > 0)
+    .map((s,i) => ({ module: MODULES[i+1].title, score: s.score, total: s.total }));
+
+  const total  = scoresToSend.reduce((a,s) => a + s.score, 0);
+  const totalQ = scoresToSend.reduce((a,s) => a + s.total, 0);
+
   const payload = {
     name: studentName,
     role: studentRole,
     seniority: studentSeniority,
     unit: studentUnit,
     date: dateStr,
-    scores: moduleScores
-      .filter((s,i) => i > 0)  // 跳過課程導論
-      .map((s,i) => ({ module: MODULES[i+1].title, score: s.score, total: s.total })),
+    scores: scoresToSend,
+    total: total,
+    totalQ: totalQ,
+    pct: totalQ > 0 ? Math.round(total/totalQ*100) + '%' : 'N/A',
     details: detailCols
   };
 
-  btn.disabled = true;
-  btn.textContent = '📤 上傳中…';
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SHEET_URL;
+  form.target = '_blank';
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
 
-  const formBody = 'payload=' + encodeURIComponent(JSON.stringify(payload));
-  fetch(SHEET_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formBody
-  }).then(() => {
-    btn.textContent = '✅ 已提交！';
-    status.textContent = `成績已記錄至 Google 試算表（${dateStr}）`;
-  }).catch(() => {
-    btn.disabled = false;
-    btn.textContent = '📊 重新提交';
-    status.textContent = '⚠️ 提交失敗，請稍後再試。';
-  });
+  btn.disabled = true;
+  btn.textContent = '✅ 已提交！';
+  status.textContent = `成績已記錄至 Google 試算表（${dateStr}）`;
 }
 
 // ══════════════════════════════════════════════
@@ -1386,13 +1393,18 @@ function submitSurveyToSheets(timing, answers) {
   const now = new Date();
   const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   const payload = { type: 'survey', timing, name: studentName, role: studentRole, seniority: studentSeniority, unit: studentUnit, date: dateStr, answers };
-  const formBody = 'payload=' + encodeURIComponent(JSON.stringify(payload));
-  fetch(SURVEY_SHEET_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formBody
-  }).catch(() => {});  // 靜默送出，不跳頁
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SURVEY_SHEET_URL;
+  form.target = '_blank';
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
 }
 
 function submitSurvey() {
