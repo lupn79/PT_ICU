@@ -1217,6 +1217,7 @@ function submitToSheets() {
 
   const detailCols = {};
   QUIZZES.forEach((qs, mi) => {
+    if (mi === 0) return; // 課程導論無題目，跳過
     qs.forEach((q, qi) => {
       const d = moduleScores[mi].details[qi];
       const letters = ['A','B','C','D','E'];
@@ -1226,9 +1227,13 @@ function submitToSheets() {
 
   const payload = {
     name: studentName,
+    role: studentRole,
+    seniority: studentSeniority,
     unit: studentUnit,
     date: dateStr,
-    scores: moduleScores.map((s,i) => ({ module: MODULES[i].title, score: s.score, total: s.total })),
+    scores: moduleScores
+      .filter((s,i) => i > 0)  // 跳過課程導論
+      .map((s,i) => ({ module: MODULES[i+1].title, score: s.score, total: s.total })),
     details: detailCols
   };
 
