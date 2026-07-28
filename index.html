@@ -467,6 +467,18 @@
 
 <!-- MAIN -->
 <div class="main">
+  <!-- RESUME BANNER -->
+  <div id="resume-banner" style="display:none;background:#FFF7ED;border:1.5px solid #F59E0B;border-radius:12px;padding:14px 20px;margin-bottom:16px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div style="font-size:13px;color:#92400E;">
+      🔖 發現上次未完成的進度：<strong id="resume-name"></strong>
+      <span style="margin-left:6px;font-size:12px;color:#B45309;" id="resume-detail"></span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="resumeProgress()" style="padding:7px 16px;background:#F59E0B;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">繼續上次進度</button>
+      <button onclick="clearAndRestart()" style="padding:7px 16px;background:white;color:#92400E;border:1.5px solid #F59E0B;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">重新開始</button>
+    </div>
+  </div>
+
   <div id="student-info-bar" style="background:var(--teal-lt);border-radius:10px;padding:10px 16px;margin-bottom:20px;font-size:13px;color:var(--teal-dk);display:none;">
     👤 學員：<strong id="display-name"></strong>｜<strong id="display-unit"></strong>
   </div>
@@ -1022,12 +1034,141 @@ let studentRole = '';
 let studentSeniority = '';
 let currentModule = 0;
 let moduleCompleted = [false, false, false, false, false];
-let moduleScores = [null, null, null, null, null];   // {score, total, details[]}
-let userAnswers = [[], [], [], [], []];               // per module, per question
+let moduleScores = [null, null, null, null, null];
+let userAnswers = [[], [], [], [], []];
+let pretestDone = false;
+
+const SAVE_KEY = 'icu_em_progress';
+
+function saveProgress() {
+  const state = {
+    studentName, studentUnit, studentRole, studentSeniority,
+    currentModule, moduleCompleted, moduleScores, userAnswers, pretestDone
+  };
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function clearProgress() {
+  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+}
 
 // ══════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════
+// ── Check for saved progress on page load ──
+window.addEventListener('DOMContentLoaded', function() {
+  const saved = loadProgress();
+  if (saved && saved.studentName && saved.pretestDone) {
+    const banner = document.getElementById('resume-banner');
+    document.getElementById('resume-name').textContent = saved.studentName;
+    const done = saved.moduleCompleted.filter(Boolean).length;
+    document.getElementById('resume-detail').textContent = `（已完成 ${done}/5 單元）`;
+    banner.style.display = 'flex';
+    // Hide reg overlay temporarily — user can choose
+    document.getElementById('reg-overlay').style.display = 'none';
+  }
+});
+
+function resumeProgress() {
+  const saved = loadProgress();
+  if (!saved) return;
+  studentName     = saved.studentName;
+  studentUnit     = saved.studentUnit;
+  studentRole     = saved.studentRole;
+  studentSeniority= saved.studentSeniority;
+  currentModule   = saved.currentModule || 0;
+  moduleCompleted = saved.moduleCompleted;
+  moduleScores    = saved.moduleScores;
+  userAnswers     = saved.userAnswers;
+  pretestDone     = saved.pretestDone;
+
+  document.getElementById('resume-banner').style.display = 'none';
+  document.getElementById('reg-overlay').style.display = 'none';
+  document.getElementById('student-info-bar').style.display = 'block';
+  document.getElementById('display-name').textContent = studentName;
+  document.getElementById('display-unit').textContent = studentUnit;
+
+  QUIZZES.forEach((q, idx) => renderQuiz(idx));
+
+  // Restore completed module UI
+  moduleCompleted.forEach((done, mi) => {
+    if (!done) return;
+    const tab = document.getElementById(`tab-${mi}`);
+    if (tab) tab.classList.add('completed');
+    const s = moduleScores[mi];
+    if (s && s.total > 0) {
+      document.getElementById(`tab-status-${mi}`).textContent = `${s.score}/${s.total}`;
+    } else if (done) {
+      document.getElementById(`tab-status-${mi}`).textContent = '已完成';
+    }
+    // Re-mark quiz answers as submitted
+    if (mi > 0 && s && s.details && s.details.length > 0) {
+      restoreQuizUI(mi);
+    }
+    if (mi === 0) {
+      const wrap = document.getElementById('module0-done-wrap');
+      if (wrap) wrap.innerHTML = '<div style="color:var(--green);font-weight:700;font-size:14px;">✅ 已完成課程導論</div>';
+    }
+  });
+
+  switchModule(currentModule);
+  updateProgress();
+
+  // If all done, show final card
+  if (moduleCompleted.every(Boolean)) {
+    checkAllDone();
+  }
+}
+
+function restoreQuizUI(mi) {
+  const qs = QUIZZES[mi];
+  const s  = moduleScores[mi];
+  if (!s || !s.details) return;
+  qs.forEach((q, qi) => {
+    const d = s.details[qi];
+    if (!d) return;
+    const btns = document.querySelectorAll(`[id^="opt-${mi}-${qi}-"]`);
+    btns.forEach(b => { b.disabled = true; b.classList.remove('selected'); });
+    const correctBtn = document.getElementById(`opt-${mi}-${qi}-${q.answer}`);
+    if (correctBtn) correctBtn.classList.add('correct');
+    if (!d.correct) {
+      const wrongBtn = document.getElementById(`opt-${mi}-${qi}-${d.chosen}`);
+      if (wrongBtn) wrongBtn.classList.add('wrong');
+    }
+    const fb = document.getElementById(`fb-${mi}-${qi}`);
+    if (fb) {
+      fb.classList.add('show', d.correct ? 'ok' : 'ng');
+      fb.textContent = (d.correct ? '✓ 正確！' : `✗ 答案為 ${['A','B','C','D','E'][q.answer]}`) + '　' + q.explanation;
+    }
+  });
+  const submitBtn = document.getElementById(`submit-btn-${mi}`);
+  if (submitBtn) submitBtn.disabled = true;
+  const banner = document.getElementById(`score-banner-${mi}`);
+  if (banner && s.total > 0) {
+    const pct = Math.round(s.score/s.total*100);
+    const pass = pct >= 60;
+    banner.classList.add('show', pass ? 'pass' : 'fail');
+    const sn = document.getElementById(`score-num-${mi}`);
+    if (sn) { sn.textContent = `${s.score}/${s.total}`; sn.className = `usb-score ${pass?'pass':'fail'}`; }
+    const sl = document.getElementById(`score-label-${mi}`);
+    if (sl) sl.textContent = `${pct}% — ${pass ? '通過！🎉' : '繼續加油！'}`;
+  }
+}
+
+function clearAndRestart() {
+  clearProgress();
+  document.getElementById('resume-banner').style.display = 'none';
+  document.getElementById('reg-overlay').style.display = 'flex';
+}
+
 function toggleRoleOther() {
   const sel = document.getElementById('reg-role').value;
   document.getElementById('reg-role-other').style.display = sel === '__other__' ? 'block' : 'none';
@@ -1152,6 +1293,7 @@ function submitQuiz(mi) {
   document.getElementById(`tab-${mi}`).classList.add('completed');
   document.getElementById(`tab-status-${mi}`).textContent = `${score}/${qs.length}`;
   updateProgress();
+  saveProgress();
   checkAllDone();
 }
 
@@ -1261,6 +1403,7 @@ function submitToSheets() {
   btn.disabled = true;
   btn.textContent = '✅ 已提交！';
   status.textContent = `成績已記錄至 Google 試算表（${dateStr}）`;
+  clearProgress(); // 課程全部完成，清除暫存
 }
 
 // ══════════════════════════════════════════════
@@ -1417,13 +1560,14 @@ function submitSurvey() {
   }
   errEl.style.display = 'none';
   submitSurveyToSheets('前測', answers);
+  pretestDone = true;
   document.getElementById('pretest-overlay').style.display = 'none';
-  // show course
   document.getElementById('student-info-bar').style.display = 'block';
   document.getElementById('display-name').textContent = studentName;
   document.getElementById('display-unit').textContent = studentUnit;
   QUIZZES.forEach((q, idx) => renderQuiz(idx));
   updateProgress();
+  saveProgress();
 }
 
 function submitPostSurvey() {
@@ -1447,6 +1591,7 @@ function completeModule0() {
   document.getElementById('tab-status-0').textContent = '已完成';
   document.getElementById('module0-done-wrap').innerHTML = '<div style="color:var(--green);font-weight:700;font-size:14px;">✅ 已完成課程導論</div>';
   updateProgress();
+  saveProgress();
   checkAllDone();
 }
 
