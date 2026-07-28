@@ -396,6 +396,42 @@
   </div>
 </div>
 
+
+<!-- PRE/POST TEST OVERLAY -->
+<div id="pretest-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.75);backdrop-filter:blur(4px);z-index:998;overflow-y:auto;">
+  <div style="max-width:760px;margin:40px auto;padding:20px;">
+    <div style="background:white;border-radius:20px;padding:36px;box-shadow:0 24px 60px rgba(0,0,0,0.25);">
+      <div id="pretest-title-badge" style="display:inline-block;background:var(--teal);color:white;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:12px;font-family:'Inter',sans-serif;">前測</div>
+      <h2 style="font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px;">重症系統性乏力與早期活動</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">請依據您目前的認知作答，沒有標準答案，請誠實填寫。</p>
+
+      <!-- 知識量表 -->
+      <div style="margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;">一、知識量表</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">請回答以下問題，選項：是／不確定／否</div>
+        <div id="knowledge-questions"></div>
+      </div>
+
+      <!-- 態度量表 -->
+      <div style="margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;">二、態度量表</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">1＝非常不同意　2＝不同意　3＝普通　4＝同意　5＝非常同意</div>
+        <div id="attitude-questions"></div>
+      </div>
+
+      <!-- 行為量表 -->
+      <div style="margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;">三、行為量表</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">1＝從不　2＝很少　3＝偶爾　4＝常常　5＝總是</div>
+        <div id="behavior-questions"></div>
+      </div>
+
+      <button onclick="submitSurvey()" style="width:100%;padding:14px;background:var(--teal);color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">提交並開始課程 →</button>
+      <div id="survey-error" style="margin-top:12px;color:var(--rose);font-size:13px;display:none;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <div class="header">
   <div class="header-inner">
@@ -465,117 +501,30 @@
         <div class="card-header">
           <div class="card-header-icon">📖</div>
           <div>
-            <h2>課程導論 — ICUAW 重症系統性乏力</h2>
-            <p>學習核心概念、危險因子與早期活動的益處</p>
+            <h2>課程導論</h2>
+            <p>重症系統性乏力與早期活動介紹</p>
           </div>
         </div>
         <div class="card-body">
-          <div class="info-grid">
-            <div class="info-card">
-              <div class="ic-label">定義</div>
-              <div class="ic-title">ICUAW 是什麼？</div>
-              <div class="ic-body">加護病房病人因重症疾病或治療後，產生<strong>神經肌肉病變</strong>，造成<strong>全身性、系統性、對稱性</strong>的肌肉乏力。</div>
-            </div>
-            <div class="info-card">
-              <div class="ic-label">發生率</div>
-              <div class="ic-title" style="font-size:28px;color:var(--teal)">25–50%</div>
-              <div class="ic-body">ICU 住院患者中有高達一半可能發生 ICUAW，不可輕忽。</div>
-            </div>
-            <div class="info-card">
-              <div class="ic-label">臨床表徵</div>
-              <div class="ic-title">三大影響部位</div>
-              <div class="ic-body">
-                🦾 四肢肌力↓（近端 &gt; 遠端）<br>
-                🫁 呼吸肌群↓ → 脫離呼吸器困難<br>
-                👄 吞嚥肌群↓ → 吞嚥障礙
-              </div>
-            </div>
-            <div class="info-card">
-              <div class="ic-label">ICUAW 影響</div>
-              <div class="ic-title">住院期間惡化</div>
-              <div class="ic-body">
-                ↑ 呼吸器使用天數<br>
-                ↑ ICU & 住院天數<br>
-                ↑ 死亡率<br>
-                ↓ 身體活動功能
-              </div>
-            </div>
+          <div class="video-note">👇 請觀看以下兩部影片後，繼續其他單元</div>
+
+          <div style="margin-bottom:8px;font-size:14px;font-weight:700;color:var(--navy);">① 重症系統性乏力</div>
+          <div class="video-wrap" style="margin-bottom:28px;">
+            <iframe src="https://www.youtube.com/embed/UYC0vnfBvbk" allowfullscreen title="重症系統性乏力"></iframe>
           </div>
 
-          <div class="info-card" style="margin-bottom:14px;">
-            <div class="ic-label">三種分類</div>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
-              <div style="flex:1;min-width:160px;padding:10px;background:white;border-radius:8px;border:1px solid var(--border);">
-                <div style="font-weight:800;font-size:13px;color:var(--teal)">CIP</div>
-                <div style="font-size:12px;color:var(--slate);margin-top:4px;">重症病理性多重神經病變<br>導因：全身性發炎反應</div>
-              </div>
-              <div style="flex:1;min-width:160px;padding:10px;background:white;border-radius:8px;border:1px solid var(--border);">
-                <div style="font-weight:800;font-size:13px;color:var(--amber)">CIM</div>
-                <div style="font-size:12px;color:var(--slate);margin-top:4px;">重症病理性肌肉病變<br>導因：發炎介質、臥床不動</div>
-              </div>
-              <div style="flex:1;min-width:160px;padding:10px;background:white;border-radius:8px;border:1px solid var(--border);">
-                <div style="font-weight:800;font-size:13px;color:var(--rose)">CINM</div>
-                <div style="font-size:12px;color:var(--slate);margin-top:4px;">重症病理性神經肌肉病變<br>兩者皆有</div>
-              </div>
-            </div>
+          <div style="margin-bottom:8px;font-size:14px;font-weight:700;color:var(--navy);">② 早期活動介紹</div>
+          <div class="video-wrap" style="margin-bottom:28px;">
+            <iframe src="https://www.youtube.com/embed/SzUYJt5kf7w" allowfullscreen title="早期活動介紹"></iframe>
           </div>
 
-          <div class="info-card" style="margin-bottom:20px;">
-            <div class="ic-label">危險因子</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
-              <div>
-                <div style="font-size:12px;font-weight:700;color:var(--rose);margin-bottom:6px;">🔒 不可調節</div>
-                <div class="danger-tags">
-                  <span class="dtag red">年齡</span>
-                  <span class="dtag red">女性</span>
-                  <span class="dtag red">APACHE&gt;15</span>
-                  <span class="dtag red">高 SOFA</span>
-                  <span class="dtag red">敗血症</span>
-                </div>
-              </div>
-              <div>
-                <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;">🔓 可調節</div>
-                <div class="danger-tags">
-                  <span class="dtag blue">長時間臥床</span>
-                  <span class="dtag orange">深度鎮靜</span>
-                  <span class="dtag blue">高血糖</span>
-                  <span class="dtag orange">呼吸器天數</span>
-                  <span class="dtag blue">肌肉鬆弛劑</span>
-                  <span class="dtag orange">皮質類固醇</span>
-                </div>
-              </div>
-            </div>
+          <div style="background:var(--teal-lt);border-left:3px solid var(--teal);padding:14px 18px;border-radius:0 8px 8px 0;font-size:13px;color:var(--teal-dk);">
+            ✅ 看完兩部影片後，請點選上方其他單元繼續學習。完成所有單元後將進行後測。
           </div>
 
-          <div class="info-card" style="background:var(--teal-lt);border:1px solid var(--teal);margin-bottom:0;">
-            <div class="ic-label" style="color:var(--teal-dk)">預防策略 EM 的效益</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
-              <span class="dtag blue">↓ 呼吸器使用天數</span>
-              <span class="dtag blue">↓ ICU 停留天數</span>
-              <span class="dtag blue">↓ 譫妄發生</span>
-              <span class="dtag blue">↓ 死亡率</span>
-              <span class="dtag blue">↑ 身體活動功能</span>
-              <span class="dtag blue">↑ 生活品質</span>
-            </div>
-            <div style="font-size:12px;color:var(--teal-dk);margin-top:10px;">
-              ⏰ <strong>Early</strong> = 入住 ICU <strong>7 天內</strong>，或仍使用呼吸器期間開始復健活動（生命徵象穩定為前提）
-            </div>
-          </div>
-
-          <!-- QUIZ 0 -->
-          <div class="quiz-section">
-            <div class="quiz-header">
-              <h3>📝 單元測驗</h3>
-              <span id="quiz-count-0">5 題</span>
-            </div>
-            <div id="quiz-0"></div>
-            <button class="submit-quiz-btn" id="submit-btn-0" onclick="submitQuiz(0)">提交本單元答案</button>
-            <div class="unit-score-banner" id="score-banner-0">
-              <div class="usb-score" id="score-num-0"></div>
-              <div>
-                <div class="usb-label" id="score-label-0"></div>
-              </div>
-            </div>
+          <!-- Mark module 0 as completable via button -->
+          <div style="margin-top:20px;text-align:center;" id="module0-done-wrap">
+            <button class="submit-quiz-btn" onclick="completeModule0()">✔ 已看完影片，繼續下一單元</button>
           </div>
         </div>
       </div>
@@ -800,6 +749,37 @@
     </button>
     <div class="submit-status" id="submit-status"></div>
   </div>
+
+
+<!-- POST TEST OVERLAY -->
+<div id="posttest-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.75);backdrop-filter:blur(4px);z-index:998;overflow-y:auto;">
+  <div style="max-width:760px;margin:40px auto;padding:20px;">
+    <div style="background:white;border-radius:20px;padding:36px;box-shadow:0 24px 60px rgba(0,0,0,0.25);">
+      <div style="display:inline-block;background:#F59E0B;color:white;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:12px;font-family:'Inter',sans-serif;">後測</div>
+      <h2 style="font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px;">重症系統性乏力與早期活動</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">請依據學習後的認知作答，請誠實填寫。</p>
+
+      <div style="margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;">一、知識量表</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">請回答以下問題，選項：是／不確定／否</div>
+        <div id="post-knowledge-questions"></div>
+      </div>
+      <div style="margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;">二、態度量表</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">1＝非常不同意　2＝不同意　3＝普通　4＝同意　5＝非常同意</div>
+        <div id="post-attitude-questions"></div>
+      </div>
+      <div style="margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;">三、行為量表</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">1＝從不　2＝很少　3＝偶爾　4＝常常　5＝總是</div>
+        <div id="post-behavior-questions"></div>
+      </div>
+
+      <button onclick="submitPostSurvey()" style="width:100%;padding:14px;background:#F59E0B;color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">提交後測 →</button>
+      <div id="post-survey-error" style="margin-top:12px;color:var(--rose);font-size:13px;display:none;"></div>
+    </div>
+  </div>
+</div>
 
 </div><!-- end main -->
 
@@ -1033,11 +1013,13 @@ function startCourse() {
   if (!name || !unit) { alert('請填寫姓名與單位'); return; }
   studentName = name; studentUnit = unit;
   document.getElementById('reg-overlay').style.display = 'none';
-  document.getElementById('student-info-bar').style.display = 'block';
-  document.getElementById('display-name').textContent = studentName;
-  document.getElementById('display-unit').textContent = studentUnit;
-  QUIZZES.forEach((q, idx) => renderQuiz(idx));
-  updateProgress();
+  // Show pretest
+  renderSurveyQuestions('pre',
+    document.getElementById('knowledge-questions'),
+    document.getElementById('attitude-questions'),
+    document.getElementById('behavior-questions')
+  );
+  document.getElementById('pretest-overlay').style.display = 'block';
 }
 
 // ══════════════════════════════════════════════
@@ -1162,6 +1144,13 @@ function updateProgress() {
 
 function checkAllDone() {
   if (!moduleCompleted.every(Boolean)) return;
+  // Show posttest first
+  renderSurveyQuestions('post',
+    document.getElementById('post-knowledge-questions'),
+    document.getElementById('post-attitude-questions'),
+    document.getElementById('post-behavior-questions')
+  );
+  document.getElementById('posttest-overlay').style.display = 'block';
   const fc = document.getElementById('final-card');
   fc.classList.add('show');
   // build score row
@@ -1210,26 +1199,207 @@ function submitToSheets() {
     details: detailCols
   };
 
-  // 用隱藏表單提交，繞過 CORS 限制
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = SHEET_URL;
-  form.target = '_blank';
-
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'payload';
-  input.value = JSON.stringify(payload);
-  form.appendChild(input);
-
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-
   btn.disabled = true;
-  btn.textContent = '✅ 已提交！';
-  status.textContent = `成績已送出（${dateStr}）。新分頁若顯示 success 即寫入成功。`;
+  btn.textContent = '📤 上傳中…';
+
+  const formBody = 'payload=' + encodeURIComponent(JSON.stringify(payload));
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formBody
+  }).then(() => {
+    btn.textContent = '✅ 已提交！';
+    status.textContent = `成績已記錄至 Google 試算表（${dateStr}）`;
+  }).catch(() => {
+    btn.disabled = false;
+    btn.textContent = '📊 重新提交';
+    status.textContent = '⚠️ 提交失敗，請稍後再試。';
+  });
 }
+
+// ══════════════════════════════════════════════
+//  SURVEY DATA
+// ══════════════════════════════════════════════
+const KNOWLEDGE_QS = [
+  '有重症系統性乏力的病人需要使用呼吸器的時間較長',
+  '重症系統性乏力不會影響吞嚥肌群',
+  '控制敗血症可以降低重症系統性乏力的風險',
+  '早期活動可依據IMS（ICU Mobilization Scale）制定計劃',
+  '測量Muscle power 是評估病人有無重症系統性乏力的最佳方法',
+  '早期活動無法改善呼吸功能',
+  '早期活動要在入住加護病房一週內開始執行',
+  '有重症系統性乏力的病人不影響住院的天數',
+  '早期活動是指在床上的被動關節活動',
+  '長時間躺床或不活動會增加重症系統性乏力的風險',
+  '執行早期活動前要評估病人的疼痛指數',
+  '有插管使用呼吸器的病人不適合進行離床的活動',
+  '重症系統性乏力係指病人因重症疾病或接受加護病房治療後，產生的神經肌肉病變',
+  '深度鎮靜可以降低重症系統性乏力的風險',
+  '住院天數長會增加重症系統性乏力的風險',
+  '早期活動對改善重症系統性乏力是有效的',
+  '早期活動要在重症病人停止強心劑或升壓藥後開始進行',
+  '早期活動是重症照護ABCDEF bundle 中的一環',
+  '早期活動可以減少住加護病房的天數',
+  '重症病人進行早期活動與譫妄發生及譫妄持續時間無關'
+];
+
+const ATTITUDE_QS = [
+  '我認為加護病房的工作人員都需要學習重症系統性乏力的相關知識',
+  '我認為監測重症系統性乏力與監測鎮靜深度一樣重要',
+  '我認為協助重症病人進行早期活動可以改善預後',
+  '我認為在加護病房內進行早期活動是安全且可行的',
+  '我認為物理治療師可以主動評估病人狀況並與醫療團隊共同開始進行早期活動',
+  '我認為醫師、護理師、物理治療師與呼吸治療師應共同合作，協助重症病人執行早期活動',
+  '我有意願協助意識不清的病人進行早期活動',
+  '我有意願協助有插管與使用呼吸器的病人進行早期活動',
+  '我有意願調降病人的鎮靜藥物劑量以利早期活動的進行（與醫師、護理師討論）',
+  '我有意願衛教病人或家屬進行早期活動的方式'
+];
+
+const BEHAVIOR_QS = [
+  '我在臨床工作時有主動注意病人的重症系統性乏力狀態',
+  '我會評估病人可能發生重症系統性乏力的危險因子，例如：制動、鎮靜藥物使用',
+  '我會與病人或家屬討論肌肉力量的變化',
+  '我會與醫療團隊討論早期活動的相關事項',
+  '我會評估病人狀況是否可以執行早期活動',
+  '執行物理治療時，我會協助病人坐於床旁椅',
+  '執行物理治療時，我會協助意識不清的病人進行被動關節活動',
+  '執行物理治療時，我會協助使用呼吸器的病人下床活動',
+  '我會鼓勵意識清醒的病人主動參與早期活動',
+  '我會引導並讓家屬協助病人執行早期活動'
+];
+
+const SURVEY_SHEET_URL = 'https://script.google.com/macros/s/AKfycbyJjsCXwXHY8G0Vzk2-FaRc4JK7ZvnQvDdlVK3kXw8c90wHDXFqHYkZ6p3aiNkJnxcgEQ/exec';
+
+// ── render survey questions ──
+function renderSurveyQuestions(prefix, kContainer, aContainer, bContainer) {
+  // Knowledge: 是/不確定/否
+  kContainer.innerHTML = '';
+  KNOWLEDGE_QS.forEach((q, i) => {
+    kContainer.innerHTML += `
+      <div style="margin-bottom:14px;padding:12px 14px;background:var(--silver);border-radius:8px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.5;">${i+1}. ${q}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          ${['是','不確定','否'].map(opt => `
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;">
+              <input type="radio" name="${prefix}_k${i+1}" value="${opt}" style="accent-color:var(--teal);"> ${opt}
+            </label>`).join('')}
+        </div>
+      </div>`;
+  });
+
+  // Attitude: 1-5
+  aContainer.innerHTML = '';
+  ATTITUDE_QS.forEach((q, i) => {
+    aContainer.innerHTML += `
+      <div style="margin-bottom:14px;padding:12px 14px;background:var(--silver);border-radius:8px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.5;">${i+1}. ${q}</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          ${[1,2,3,4,5].map(n => `
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px;">
+              <input type="radio" name="${prefix}_a${i+1}" value="${n}" style="accent-color:var(--teal);"> ${n}
+            </label>`).join('')}
+        </div>
+      </div>`;
+  });
+
+  // Behavior: 1-5
+  bContainer.innerHTML = '';
+  BEHAVIOR_QS.forEach((q, i) => {
+    bContainer.innerHTML += `
+      <div style="margin-bottom:14px;padding:12px 14px;background:var(--silver);border-radius:8px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.5;">${i+1}. ${q}</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          ${[1,2,3,4,5].map(n => `
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px;">
+              <input type="radio" name="${prefix}_b${i+1}" value="${n}" style="accent-color:var(--teal);"> ${n}
+            </label>`).join('')}
+        </div>
+      </div>`;
+  });
+}
+
+function collectSurveyAnswers(prefix) {
+  const answers = {};
+  let allAnswered = true;
+  // knowledge
+  for (let i = 1; i <= KNOWLEDGE_QS.length; i++) {
+    const sel = document.querySelector(`input[name="${prefix}_k${i}"]:checked`);
+    if (!sel) { allAnswered = false; answers[`知識${i}`] = ''; }
+    else answers[`知識${i}`] = sel.value;
+  }
+  // attitude
+  for (let i = 1; i <= ATTITUDE_QS.length; i++) {
+    const sel = document.querySelector(`input[name="${prefix}_a${i}"]:checked`);
+    if (!sel) { allAnswered = false; answers[`態度${i}`] = ''; }
+    else answers[`態度${i}`] = sel.value;
+  }
+  // behavior
+  for (let i = 1; i <= BEHAVIOR_QS.length; i++) {
+    const sel = document.querySelector(`input[name="${prefix}_b${i}"]:checked`);
+    if (!sel) { allAnswered = false; answers[`行為${i}`] = ''; }
+    else answers[`行為${i}`] = sel.value;
+  }
+  return { answers, allAnswered };
+}
+
+function submitSurveyToSheets(timing, answers) {
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const payload = { type: 'survey', timing, name: studentName, unit: studentUnit, date: dateStr, answers };
+  const formBody = 'payload=' + encodeURIComponent(JSON.stringify(payload));
+  fetch(SURVEY_SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formBody
+  }).catch(() => {});  // 靜默送出，不跳頁
+}
+
+function submitSurvey() {
+  const { answers, allAnswered } = collectSurveyAnswers('pre');
+  const errEl = document.getElementById('survey-error');
+  if (!allAnswered) {
+    errEl.style.display = 'block';
+    errEl.textContent = '⚠️ 請回答所有題目後再提交。';
+    return;
+  }
+  errEl.style.display = 'none';
+  submitSurveyToSheets('前測', answers);
+  document.getElementById('pretest-overlay').style.display = 'none';
+  // show course
+  document.getElementById('student-info-bar').style.display = 'block';
+  document.getElementById('display-name').textContent = studentName;
+  document.getElementById('display-unit').textContent = studentUnit;
+  QUIZZES.forEach((q, idx) => renderQuiz(idx));
+  updateProgress();
+}
+
+function submitPostSurvey() {
+  const { answers, allAnswered } = collectSurveyAnswers('post');
+  const errEl = document.getElementById('post-survey-error');
+  if (!allAnswered) {
+    errEl.style.display = 'block';
+    errEl.textContent = '⚠️ 請回答所有題目後再提交。';
+    return;
+  }
+  errEl.style.display = 'none';
+  submitSurveyToSheets('後測', answers);
+  document.getElementById('posttest-overlay').style.display = 'none';
+  alert('✅ 後測已提交！感謝您完成本課程。');
+}
+
+function completeModule0() {
+  moduleCompleted[0] = true;
+  moduleScores[0] = { score: 0, total: 0, details: [] };
+  document.getElementById('tab-0').classList.add('completed');
+  document.getElementById('tab-status-0').textContent = '已完成';
+  document.getElementById('module0-done-wrap').innerHTML = '<div style="color:var(--green);font-weight:700;font-size:14px;">✅ 已完成課程導論</div>';
+  updateProgress();
+  checkAllDone();
+}
+
 </script>
 </body>
 </html>
